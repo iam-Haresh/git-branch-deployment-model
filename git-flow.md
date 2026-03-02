@@ -24,7 +24,7 @@ Git Flow uses **two permanent long-lived branches** and several supporting short
 | Feature | `feature/<ticket-id>-short-description` | `develop` | `develop` | Days to weeks |
 | Release | `release/<version>` e.g. `release/1.4.0` | `develop` | `main` + `develop` | Days to 1–2 weeks |
 | Hotfix | `hotfix/<version>` e.g. `hotfix/1.4.1` | `main` | `main` + `develop` | Hours to a day |
-| Bugfix | `bugfix/<ticket-id>-description` | `develop` or `release/*` | Same branch it came from | Days |
+| Bugfix (not standard) | `bugfix/<ticket-id>-description` | `develop` or `release/*` | Same branch it came from | Days |
 
 ---
 
@@ -44,7 +44,7 @@ Git Flow uses **two permanent long-lived branches** and several supporting short
 | `develop` | **Dev** | Automated tests and QA team testing happen here after feature merges |
 | `release/*` | **QA/UAT** | Business/client acceptance testing; only bug fixes allowed here |
 | `main` / `master` | **PROD** | **Tagged** releases go live; deployment is triggered on merge + tag |
-| `hotfix/*` | **PROD** (fast-tracked via UAT smoke test) | Emergency fixes bypass the full release cycle |
+| `hotfix/*` | **hotfix → main → tag → PROD** (fast-tracked via UAT smoke test) | Emergency fixes bypass the full release cycle |
 
 ```
 feature/* ──► DEV
@@ -125,9 +125,10 @@ CI/CD pipelines auto-deploy based on branch:
 on:
   push:
     branches:
-      - develop      # → deploys to QA
+      - feature/**   # → deploys to DEV
+      - develop      # → deploys to Dev/Integration
       - release/**   # → deploys to UAT
-      - main         # → deploys to PROD
+      - tag         # → deploys to PROD (tag crated from main)
 ```
 
 #### 6. Hotfix Fast-Track Process
