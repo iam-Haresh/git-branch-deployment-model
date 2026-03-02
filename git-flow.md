@@ -14,7 +14,7 @@ Git Flow uses **two permanent long-lived branches** and several supporting short
 
 | Branch | Purpose | Default Branch? |
 |--------|---------|----------------|
-| `main` / `master` | Always reflects **production-ready** code. Every commit here is a tagged release. | ✅ Yes (production baseline) |
+| `main` / `master` | Always reflects **production-ready** code. Every release commit here is a tagged. | ✅ Yes (production baseline) |
 | `develop` | Integration branch. Reflects the **latest delivered development** changes for the next release. | Acts as the default for feature work |
 
 ### Short-Lived Branches (Temporary)
@@ -41,9 +41,9 @@ Git Flow uses **two permanent long-lived branches** and several supporting short
 | Branch | Deployed To | Notes |
 |--------|------------|-------|
 | `feature/*` | **Dev** (optional per-feature environment or shared Dev) | Developers validate individual features here |
-| `develop` | **QA** | Automated tests and QA team testing happen here after feature merges |
-| `release/*` | **UAT** | Business/client acceptance testing; only bug fixes allowed here |
-| `main` / `master` | **PROD** | Tagged releases go live; deployment is triggered on merge + tag |
+| `develop` | **Dev** | Automated tests and QA team testing happen here after feature merges |
+| `release/*` | **QA/UAT** | Business/client acceptance testing; only bug fixes allowed here |
+| `main` / `master` | **PROD** | **Tagged** releases go live; deployment is triggered on merge + tag |
 | `hotfix/*` | **PROD** (fast-tracked via UAT smoke test) | Emergency fixes bypass the full release cycle |
 
 ```
