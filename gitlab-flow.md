@@ -6,6 +6,8 @@ GitLab Flow is a branching strategy created by GitLab Inc. that sits between the
 
 GitLab Flow solves this by introducing **environment branches** — dedicated, long-lived branches that mirror specific deployment environments. Code flows **downstream** through these branches (never upstream), ensuring clear, auditable promotion paths.
 
+**Each environment branch must always reflect what is deployed in that environment.**
+
 There are two main variants:
 1. **Environment branches model** — for teams with multiple static environments (Dev → Staging → Production)
 2. **Release branches model** — for versioned software that needs to support multiple releases in production simultaneously
@@ -38,8 +40,8 @@ There are two main variants:
 
 ## Default Branch
 
-- **`main`** is the default development branch where all feature work lands.
-- **`production`** is the **source of truth for what is live** in production.
+- **`main`** remains the source of future deployment.
+- **`production`** reflects **what is live** in production.
 - GitLab strongly recommends setting `main` as the repository's default branch (for cloning, MR base, etc.).
 - The `staging` and `production` branches are protected and only updated via Merge Requests from upstream environment branches.
 
@@ -85,7 +87,16 @@ main → release/2.3 (cut when ready) → UAT → tag → PROD
 ### Hotfix Flow
 
 ```
-hotfix/* (from production) → PROD-fix → cherry-pick → main (to prevent regression)
+production
+   ↓
+hotfix/*
+   ↓
+production
+   ↓
+main
+   ↓
+staging
+
 ```
 
 ---
@@ -113,7 +124,7 @@ hotfix/* (from production) → PROD-fix → cherry-pick → main (to prevent reg
 - **Bridges the gap** between GitHub Flow (too simple) and Git Flow (too complex).
 - **Explicit environment promotion** — code can only move downstream; prevents accidental mixing of unstable code into prod.
 - **Clear audit trail** — the `staging` and `production` branches always reflect exactly what is deployed; no guesswork.
-- **Native CI/CD integration** — GitLab CI/CD auto-detects branch names and triggers environment-specific pipelines.
+- **Native CI/CD integration** — GitLab CI/CD pipelines are commonly configured to deploy based on branch names.
 - **Supports both CD and versioned releases** — two variants cover most team needs.
 - **Hotfix handling is explicit** — hotfixes go directly to `production` and are cherry-picked back to `main`.
 - **Works well with Merge Requests** — GitLab's MR workflows (with approvals, environment protections) fit perfectly.
@@ -122,7 +133,7 @@ hotfix/* (from production) → PROD-fix → cherry-pick → main (to prevent reg
 ### ❌ Cons
 
 - **Branch proliferation** — maintaining environment branches (`main`, `staging`, `production`) alongside feature branches adds management overhead.
-- **Cherry-picking risk** — in the release branches variant, cherry-picking hotfixes from `production` to `main` can be error-prone.
+- **Cherry-picking risk** — in the release branches variant, `Hotfixes` are merged or `cherry-picked` back to main.
 - **Environment branches can diverge** — if deployments to `staging` are slow, `staging` can lag behind `main`, creating a staleness problem.
 - **Not true TBD** — `main` isn't always production-ready (code goes through `staging` first), so it's not suitable for every-commit production deployments.
 - **Requires CI/CD maturity** — full value is realised only when environment promotions are automated.
